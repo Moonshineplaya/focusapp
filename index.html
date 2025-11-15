@@ -1,221 +1,640 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Clean Days — Focus Shield</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg1:#071025; --bg2:#071c2f; --card:#071430; --glass: rgba(255,255,255,0.04);
-  --accent:#7bd389; --accent2:#7bc1ff; --muted:#9fb0c2; --white: #e8f6ff;
-}
-html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--white);background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 100%);}
-.wrap{max-width:720px;margin:28px auto;padding:20px;}
-header{display:flex;align-items:center;gap:14px}
-.logo{width:66px;height:66px;border-radius:14px;background:linear-gradient(135deg,#0b3a4b,#05293a);display:flex;align-items:center;justify-content:center;color:var(--white);font-weight:800;font-size:20px;box-shadow:0 10px 30px rgba(6,10,20,0.6)}
-h1{font-size:22px;margin:0}
-.sub{color:var(--muted);font-size:13px;margin-top:2px}
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 14px 40px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
-.top-row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-.big{font-weight:800;font-size:56px;line-height:1;color:var(--accent);text-align:center;font-variant-numeric:tabular-nums;transition: transform 0.1s;}
-.shake{animation: shake 0.3s infinite}
-@keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(2px,-2px)}50%{transform:translate(-2px,2px)}75%{transform:translate(2px,2px)}100%{transform:translate(0,0)}}
-.small-muted{color:var(--muted);font-size:13px;text-align:center}
-.last-slip{font-weight:700;color:var(--accent2)}
-.clock-box{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;text-align:center}
-.clock-line{font-weight:700;font-size:18px}
-.controls{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
-button{background:linear-gradient(180deg,#144a5f,#0f3b4c);border:1px solid rgba(255,255,255,0.04);color:var(--white);padding:12px 16px;border-radius:12px;font-weight:700;min-width:140px;cursor:pointer}
-button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);min-width:120px}
-button.danger{background:linear-gradient(180deg,#ff6b6b,#ff4b4b);border:none}
-footer{color:var(--muted);text-align:center;font-size:13px;margin-top:18px}
-.hint{font-size:13px;color:var(--muted);text-align:center;margin-top:10px}
-
-.shield{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;z-index:9999}
-.shade{position:absolute;inset:0;background:rgba(255,0,0,0.2);border:3px solid red;pointer-events:none}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:black}
-.overlay{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;padding:18px;pointer-events:none}
-.shield-top{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px 18px;color:var(--muted);pointer-events:auto}
-.pill{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:999px;font-weight:700;color:var(--white)}
-.quote-wrap{width:100%;max-width:980px;padding:20px;display:flex;align-items:center;justify-content:center}
-.quote{pointer-events:auto;background:linear-gradient(180deg, rgba(8,8,8,0.25), rgba(8,8,8,0.45));backdrop-filter: blur(8px);padding:20px;border-radius:14px;color:#fff;text-align:center;font-size:20px;font-weight:700;line-height:1.25;max-width:900px}
-.shield-controls{display:flex;gap:10px;margin-top:22px;pointer-events:auto}
-.small-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:10px;color:var(--muted);font-weight:700}
-.close-big{background:linear-gradient(180deg,#ff7b7b,#ff5656);border:none;padding:10px 14px;border-radius:12px;color:white;font-weight:800}
-.hidden{display:none}
-@media (max-width:520px){.big{font-size:40px}.quote{font-size:18px;padding:16px}.controls{gap:8px}button{min-width:110px;padding:10px 12px}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clean Days — Focus Shield</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #1a1a1a;
+      --card-bg: rgba(26, 26, 26, 0.9);
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --accent-bronze: #cd7f32;
+      --accent-silver: #c0c0c0;
+      --accent-gold: #ffd700;
+      --accent-platinum: #e5e4e2;
+      --button-bg: linear-gradient(135deg, #333, #444);
+      --button-hover: linear-gradient(135deg, #444, #555);
+      --panic-bg: rgba(255, 64, 64, 0.3);
+      --shield-bg: rgba(255, 0, 0, 0.25);
+      --glow-color: #00ffcc;
+      --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-heavy: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      color: var(--text-primary);
+      background: var(--bg-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+      background: var(--card-bg);
+      border-radius: 15px;
+      box-shadow: var(--shadow-heavy);
+      position: relative;
+      z-index: 1;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .orb {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 20px;
+      position: relative;
+      animation: orbWave 8s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+    }
+    .orb svg {
+      width: 100%;
+      height: 100%;
+    }
+    .orb svg circle {
+      cx: 75;
+      cy: 75;
+      r: 75;
+      fill: url(#orbGradient);
+    }
+    .orb-drop {
+      width: 15px;
+      height: 15px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
+      border-radius: 50%;
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      filter: blur(2px);
+    }
+    @keyframes orbWave {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      20% { transform: translate(40px, -30px) rotate(72deg); }
+      40% { transform: translate(0, -60px) rotate(144deg); }
+      60% { transform: translate(-40px, -30px) rotate(216deg); }
+      80% { transform: translate(0, -15px) rotate(288deg); }
+      100% { transform: translate(0, 0) rotate(360deg); }
+    }
+    .status {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .days {
+      font-size: 48px;
+      font-weight: 800;
+      margin: 0;
+      color: var(--text-primary);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .time {
+      font-size: 20px;
+      color: var(--text-secondary);
+      margin-top: 10px;
+      letter-spacing: 0.3px;
+      font-weight: 500;
+    }
+    .last-slip {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 15px;
+      opacity: 0.8;
+      font-style: italic;
+    }
+    .tier {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 10px;
+      color: var(--accent-bronze);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .reset-btn {
+      width: 50px;
+      height: 50px;
+      background: var(--button-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--text-primary);
+      cursor: pointer;
+      box-shadow: var(--shadow-light);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    .reset-btn:hover {
+      background: var(--button-hover);
+      transform: scale(1.1);
+      box-shadow: var(--shadow-heavy);
+    }
+    .progress {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: #2a2a2a;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+      z-index: 1;
+      animation: wave 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    @keyframes wave {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent-bronze);
+      width: 0%;
+      border-radius: 6px;
+      box-shadow: 0 0 8px rgba(205, 127, 50, 0.6);
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      z-index: 2;
+    }
+    .progress-text {
+      font-size: 16px;
+      margin-top: 8px;
+      letter-spacing: 0.3px;
+      font-weight: 600;
+    }
+    .options {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      gap: 15px;
+    }
+    .option {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 10px;
+      width: 45%;
+      text-align: center;
+      box-shadow: var(--shadow-light);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .option:hover {
+      transform: translateY(-6px);
+      background: rgba(0, 0, 0, 0.7);
+    }
+    .option span {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .option div {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .panic-button {
+      width: 100%;
+      padding: 12px;
+      background: var(--panic-bg);
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--shadow-light);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+    .panic-button:hover {
+      background: rgba(255, 64, 64, 0.5);
+      transform: scale(1.05);
+      box-shadow: var(--shadow-heavy);
+    }
+    .shield {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      z-index: 9999;
+      background: var(--shield-bg);
+      border: 3px solid rgba(255, 0, 0, 0.6);
+      animation: shieldPulse 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      backdrop-filter: blur(3px);
+      opacity: 1;
+      /* hidden by class .hidden via display none */
+    }
+    .shield video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+      filter: brightness(0.8) contrast(1.2);
+      pointer-events: none;
+    }
+    @keyframes shieldPulse {
+      0% { background-color: rgba(255, 0, 0, 0.25); border-color: rgba(255, 0, 0, 0.6); }
+      50% { background-color: rgba(255, 0, 0, 0.4); border-color: rgba(255, 64, 64, 0.7); }
+      100% { background-color: rgba(255, 0, 0, 0.25); border-color: rgba(255, 0, 0, 0.6); }
+    }
+    .shield .overlay {
+      position: relative;
+      z-index: 2;
+      width: 90%;
+      max-width: 500px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 15px;
+      box-shadow: var(--shadow-heavy);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .shield-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 10px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .pill {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+    .quote-wrap {
+      width: 100%;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .quote {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      padding: 15px;
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.4;
+      max-width: 400px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      box-shadow: var(--shadow-light);
+    }
+    .shield-controls {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .small-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 12px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    .small-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.1);
+    }
+    .close-big {
+      background: linear-gradient(180deg, #ff4d4d, #ff1a1a);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      box-shadow: var(--shadow-heavy);
+      transition: all 0.3s ease;
+    }
+    .close-big:hover {
+      background: linear-gradient(180deg, #ff6666, #ff3333);
+      transform: scale(1.1);
+    }
+    .hidden {
+      display: none;
+    }
+    @media (max-width: 480px) {
+      .days { font-size: 36px; }
+      .time { font-size: 16px; }
+      .controls { gap: 10px; }
+      .reset-btn { width: 40px; height: 40px; font-size: 16px; }
+      .quote { font-size: 14px; padding: 10px; }
+      .container { padding: 15px; }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="logo">FD</div>
-    <div>
-      <h1>Clean Days</h1>
-      <div class="sub">Count the time since your last slip and shield yourself when tempted</div>
+  <div class="container">
+    <div class="orb">
+      <svg viewBox="0 0 150 150">
+        <defs>
+          <radialGradient id="orbGradient" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+            <stop offset="0%" style="stop-color:#00ffcc; stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#00ccff; stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#00ff99; stop-opacity:1" />
+          </radialGradient>
+        </defs>
+        <circle cx="75" cy="75" r="75" fill="url(#orbGradient)" />
+      </svg>
+      <div class="orb-drop"></div>
     </div>
-  </header>
-
-  <div class="card" id="mainCard">
-    <div class="top-row">
-      <div style="flex:1">
-        <div style="text-align:center">
-          <div class="big" id="daysCount">0</div>
-          <div class="small-muted">days clean</div>
-        </div>
-      </div>
-
-      <div style="width:260px">
-        <div class="clock-box">
-          <div class="small-muted">Time since last slip</div>
-          <div class="clock-line" id="elapsedClock">0d 00:00:00</div>
-          <div style="margin-top:8px;color:var(--muted);font-size:13px">Last slip: <span id="lastSlipText" class="last-slip"></span></div>
-        </div>
-      </div>
-    </div>
-
+    <div class="status">You've been porn-free for</div>
+    <div class="days" id="daysCount">0</div>
+    <div class="time" id="elapsedClock">0hr 00m 00s</div>
+    <div class="last-slip" id="lastSlipText">Last slip: 11/15/2025 11:02 AM EST</div>
+    <div class="tier" id="tierLabel">Tier: Bronze</div>
     <div class="controls">
-      <button id="startShieldBtn">Start Shield</button>
-      <button id="slipBtn" class="ghost">I slipped</button>
-      <button id="resetAll" class="ghost">Reset to today</button>
+      <div class="reset-btn" id="resetBtn" aria-label="Reset">🔄</div>
     </div>
-
-    <div class="hint">
-      Tip press Start Shield when tempted allow camera and use Read button
+    <div class="progress">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text">Brain Rewiring <span id="progressPercent">0%</span></div>
     </div>
-  </div>
-
-  <footer>
-    Works on browsers and Safari iPhone
-  </footer>
-</div>
-
-<div id="shield" class="shield hidden">
-  <video id="cam" autoplay playsinline muted></video>
-  <div class="shade"></div>
-  <div class="overlay">
-    <div class="shield-top">
-      <div class="pill" id="quoteCounter">1 / 5</div>
-      <div style="display:flex;gap:8px">
-        <button id="prevQuote" class="small-btn">Prev</button>
-        <button id="nextQuote" class="small-btn">Next</button>
-        <button id="closeShield" class="close-big">Close</button>
+    <div class="options">
+      <div class="option" id="option1">
+        <span role="img" aria-label="Checkmark">✅</span>
+        <div>Free to own your life</div>
+      </div>
+      <div class="option" id="option2">
+        <span role="img" aria-label="Trophy">🏆</span>
+        <div>Tempted to Relapse</div>
       </div>
     </div>
-    <div class="quote-wrap">
-      <div class="quote" id="quoteText">Loading...</div>
-    </div>
-    <div class="shield-controls" style="justify-content:center">
-      <button id="speakBtn" class="small-btn">Read</button>
-      <button id="changeCam" class="small-btn">Switch Cam</button>
+    <button class="panic-button" id="panicBtn">Panic Button</button>
+  </div>
+
+  <div id="shield" class="shield hidden">
+    <video id="cam" autoplay playsinline muted></video>
+    <div class="overlay">
+      <div class="shield-top">
+        <div class="pill" id="quoteCounter">1 / 10</div>
+        <div style="display: flex; gap: 10px">
+          <button id="prevQuote" class="small-btn" aria-label="Previous quote">Prev</button>
+          <button id="nextQuote" class="small-btn" aria-label="Next quote">Next</button>
+          <button id="closeShield" class="close-big" aria-label="Close shield">Close</button>
+        </div>
+      </div>
+      <div class="quote-wrap">
+        <div class="quote" id="quoteText" role="region" aria-live="polite">Loading...</div>
+      </div>
+      <div class="shield-controls">
+        <button id="changeCam" class="small-btn" aria-label="Switch camera">Switch Cam</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-(() => {
-  const QUOTES = [
-    "Flee from sexual immorality 1 Corinthians 6:18",
-    "Anyone who looks at a woman lustfully has committed adultery in his heart Matthew 5:28",
-    "Blessed are the pure in heart for they will see God Matthew 5:8",
-    "Keep your heart with all vigilance for from it flow the springs of life Proverbs 4:23",
-    "I can do all things through him who strengthens me Philippians 4:13"
-  ];
+  <script>
+    window.onload = () => {
+      console.log('Script loaded');
 
-  const KEY = 'focus.lastSlip.v1';
+      const KEY = 'focus.lastSlip.v1';
+      const daysCountEl = document.getElementById('daysCount');
+      const elapsedClockEl = document.getElementById('elapsedClock');
+      const lastSlipTextEl = document.getElementById('lastSlipText');
+      const progressFillEl = document.getElementById('progressFill');
+      const progressPercentEl = document.getElementById('progressPercent');
+      const tierLabelEl = document.getElementById('tierLabel');
+      const resetBtn = document.getElementById('resetBtn');
+      const panicBtn = document.getElementById('panicBtn');
+      const shield = document.getElementById('shield');
+      const cam = document.getElementById('cam');
+      const quoteText = document.getElementById('quoteText');
+      const prevQuote = document.getElementById('prevQuote');
+      const nextQuote = document.getElementById('nextQuote');
+      const closeShield = document.getElementById('closeShield');
+      const quoteCounter = document.getElementById('quoteCounter');
+      const changeCam = document.getElementById('changeCam');
 
-  const daysCountEl = document.getElementById('daysCount');
-  const lastSlipTextEl = document.getElementById('lastSlipText');
-  const startShieldBtn = document.getElementById('startShieldBtn');
-  const slipBtn = document.getElementById('slipBtn');
-  const resetAllBtn = document.getElementById('resetAll');
-  const shield = document.getElementById('shield');
-  const cam = document.getElementById('cam');
-  const quoteText = document.getElementById('quoteText');
-  const prevQuote = document.getElementById('prevQuote');
-  const nextQuote = document.getElementById('nextQuote');
-  const closeShield = document.getElementById('closeShield');
-  const quoteCounter = document.getElementById('quoteCounter');
-  const speakBtn = document.getElementById('speakBtn');
-  const changeCam = document.getElementById('changeCam');
-  const elapsedClock = document.getElementById('elapsedClock');
+      let lastSlip = loadLastSlip();
+      let clockTimer = null;
+      let quoteIndex = 0;
+      let cycleTimer = null;
+      let stream = null;
+      let usingFacingMode = 'user';
 
-  let quoteIndex = 0;
-  let cycleTimer = null;
-  let lastSlip = loadLastSlip();
-  let stream = null;
-  let usingFacingMode = 'user';
-  let speechUtter = null;
-  let clockTimer = null;
+      const QUOTES = [
+        "Flee from sexual immorality 1 Corinthians 6:18",
+        "Anyone who looks at a woman lustfully has committed adultery in his heart Matthew 5:28",
+        "Blessed are the pure in heart for they will see God Matthew 5:8",
+        "Keep your heart with all vigilance for from it flow the springs of life Proverbs 4:23",
+        "I can do all things through him who strengthens me Philippians 4:13",
+        "Set your minds on things above, not on earthly things Colossians 3:2",
+        "Put to death, therefore, whatever belongs to your earthly nature Colossians 3:5",
+        "No temptation has overtaken you except what is common to mankind 1 Corinthians 10:13",
+        "Be sober-minded; be watchful. Your adversary the devil prowls around 1 Peter 5:8",
+        "Create in me a pure heart, O God, and renew a steadfast spirit within me Psalm 51:10"
+      ];
 
-  updateUI();
-  showQuote();
+      function pad(n) { return String(n).padStart(2, '0'); }
 
-  function pad(n){ return String(n).padStart(2,'0'); }
-  function daysSince(date){
-    const now = new Date();
-    const ms = now - new Date(date);
-    let totalSec = Math.floor(ms/1000);
-    const days = Math.floor(totalSec/86400); totalSec -= days*86400;
-    const hours = Math.floor(totalSec/3600); totalSec -= hours*3600;
-    const minutes = Math.floor(totalSec/60); const seconds = totalSec - minutes*60;
-    return {days,hours,minutes,seconds};
-  }
+      function daysSince(date) {
+        const now = new Date();
+        const ms = now - new Date(date);
+        let totalSec = Math.floor(ms / 1000);
+        const days = Math.floor(totalSec / 86400);
+        totalSec -= days * 86400;
+        const hours = Math.floor(totalSec / 3600);
+        totalSec -= hours * 3600;
+        const minutes = Math.floor(totalSec / 60);
+        const seconds = totalSec - minutes * 60;
+        return { days, hours, minutes, seconds };
+      }
 
-  function loadLastSlip(){
-    const raw = localStorage.getItem(KEY);
-    if(!raw){const d=new Date(); localStorage.setItem(KEY,d.toISOString()); return d;}
-    return new Date(raw);
-  }
-  function saveLastSlip(d){localStorage.setItem(KEY,d.toISOString()); lastSlip=d; updateUI();}
+      function loadLastSlip() {
+        try {
+          const raw = localStorage.getItem(KEY);
+          if (!raw) {
+            const d = new Date(); // use now by default
+            localStorage.setItem(KEY, d.toISOString());
+            return d;
+          }
+          return new Date(raw);
+        } catch (e) {
+          console.warn('localStorage access failed:', e);
+          return new Date();
+        }
+      }
 
-  function updateUI(){
-    lastSlipTextEl.textContent = lastSlip.toLocaleString();
-    updateClock();
-    startClock();
-  }
+      function saveLastSlip(d) {
+        try {
+          localStorage.setItem(KEY, d.toISOString());
+          lastSlip = d;
+          updateUI();
+        } catch (e) {
+          console.warn('localStorage save failed:', e);
+          alert('Failed to save data. Please check browser settings.');
+        }
+      }
 
-  function updateClock(){
-    const d = daysSince(lastSlip);
-    daysCountEl.textContent = String(d.days);
-    elapsedClock.textContent = `${d.days}d ${pad(d.hours)}:${pad(d.minutes)}:${pad(d.seconds)}`;
-    if(d.days==0 && d.hours==0 && d.minutes<1){daysCountEl.classList.add('shake');}
-    else{daysCountEl.classList.remove('shake');}
-  }
+      function updateTier(days) {
+        let tier = 'Bronze';
+        let accentColor = '--accent-bronze';
+        if (days >= 90) { tier = 'Platinum'; accentColor = '--accent-platinum'; }
+        else if (days >= 61) { tier = 'Gold'; accentColor = '--accent-gold'; }
+        else if (days >= 31) { tier = 'Silver'; accentColor = '--accent-silver'; }
+        tierLabelEl.textContent = `Tier: ${tier}`;
+        tierLabelEl.style.color = `var(${accentColor})`;
+        progressFillEl.style.background = `var(${accentColor})`;
+      }
 
-  function startClock(){stopClock(); clockTimer=setInterval(updateClock,1000);}
-  function stopClock(){if(clockTimer){clearInterval(clockTimer);clockTimer=null;}}
+      function updateUI() {
+        const d = daysSince(lastSlip);
+        daysCountEl.style.animation = 'none';
+        requestAnimationFrame(() => {
+          daysCountEl.style.animation = 'fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        });
+        daysCountEl.textContent = d.days;
+        elapsedClockEl.textContent = `${pad(d.hours)}hr ${pad(d.minutes)}m ${pad(d.seconds)}s`;
+        lastSlipTextEl.textContent = `Last slip: ${lastSlip.toLocaleString('en-US', { timeZone: 'America/New_York' })}`;
+        const progress = Math.min((d.days / 90) * 100, 100);
+        progressFillEl.style.width = `${progress}%`;
+        progressPercentEl.textContent = `${Math.round(progress)}%`;
+        updateTier(d.days);
+      }
 
-  startShieldBtn.addEventListener('click',openShield);
-  slipBtn.addEventListener('click',()=>{if(confirm('Record slip today and reset counter?')) saveLastSlip(new Date());});
-  resetAllBtn.addEventListener('click',()=>{if(confirm('Reset counter to today?')) saveLastSlip(new Date());});
-  prevQuote.addEventListener('click',previousQuote);
-  nextQuote.addEventListener('click',nextQuoteFn);
-  closeShield.addEventListener('click',closeShieldFn);
+      function startClock() { stopClock(); clockTimer = setInterval(updateUI, 1000); }
+      function stopClock() { if (clockTimer) { clearInterval(clockTimer); clockTimer = null; } }
 
-  function showQuote(){quoteText.textContent=QUOTES[quoteIndex]; quoteCounter.textContent=(quoteIndex+1)+' / '+QUOTES.length;}
-  function nextQuoteFn(){quoteIndex=(quoteIndex+1)%QUOTES.length; showQuote();}
-  function previousQuote(){quoteIndex=(quoteIndex-1+QUOTES.length)%QUOTES.length; showQuote();}
+      function showQuote() {
+        quoteText.textContent = QUOTES[quoteIndex];
+        quoteCounter.textContent = (quoteIndex + 1) + ' / ' + QUOTES.length;
+      }
 
-  async function openShield(){
-    shield.classList.remove('hidden');
-    quoteIndex=0; showQuote(); startCycle();
-    try{
-      stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:usingFacingMode}});
-      cam.srcObject=stream;
-      await cam.play();
-    }catch(e){console.warn(e);}
-  }
-  function closeShieldFn(){shield.classList.add('hidden'); stopCycle(); stopCamera();}
-  function startCycle(){stopCycle(); cycleTimer=setInterval(nextQuoteFn,7000);}
-  function stopCycle(){if(cycleTimer){clearInterval(cycleTimer);cycleTimer=null;}}
-  async function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop()); stream=null; cam.pause(); cam.srcObject=null;}}
+      function nextQuoteFn() {
+        quoteIndex = (quoteIndex + 1) % QUOTES.length;
+        showQuote();
+        if (navigator.vibrate) navigator.vibrate(30);
+      }
 
-  changeCam.addEventListener('click',async()=>{usingFacingMode=(usingFacingMode==='user')?'environment':'user'; await openShield();});
+      function previousQuote() {
+        quoteIndex = (quoteIndex - 1 + QUOTES.length) % QUOTES.length;
+        showQuote();
+        if (navigator.vibrate) navigator.vibrate(30);
+      }
 
-})();
-</script>
+      async function startCamera() {
+        try {
+          if (stream) stopCamera();
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: usingFacingMode }, audio: false });
+          cam.srcObject = stream;
+          await cam.play().catch(()=>{});
+        } catch (err) {
+          console.error('Camera error', err);
+          alert('Cannot access camera. Make sure you allowed camera permission and are on https or localhost.');
+        }
+      }
+
+      function stopCamera() {
+        try {
+          if (stream) {
+            stream.getTracks().forEach(t => {
+              try { t.stop(); } catch (e) {}
+            });
+          }
+        } catch (e) { console.warn(e); }
+        stream = null;
+        try { cam.pause(); cam.srcObject = null; } catch(e){}
+      }
+
+      async function openShield() {
+        if (!shield.classList.contains('hidden')) return; // already open
+        shield.classList.remove('hidden');
+        quoteIndex = 0;
+        showQuote();
+        startCycle();
+        await startCamera();
+        if (navigator.vibrate) navigator.vibrate(50);
+      }
+
+      function closeShieldFn() {
+        if (shield.classList.contains('hidden')) return;
+        shield.classList.add('hidden');
+        stopCycle();
+        stopCamera();
+        if (navigator.vibrate) navigator.vibrate(30);
+      }
+
+      function startCycle() { stopCycle(); cycleTimer = setInterval(nextQuoteFn, 7000); }
+      function stopCycle() { if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; } }
+
+      // wire up controls
+      resetBtn.addEventListener('click', () => {
+        if (confirm('Reset counter to today?')) {
+          saveLastSlip(new Date());
+          if (navigator.vibrate) navigator.vibrate(20);
+        }
+      });
+
+      panicBtn.addEventListener('click', async () => {
+        await openShield();
+      });
+
+      prevQuote.addEventListener('click', previousQuote);
+      nextQuote.addEventListener('click', nextQuoteFn);
+      closeShield.addEventListener('click', closeShieldFn);
+
+      changeCam.addEventListener('click', async () => {
+        usingFacingMode = (usingFacingMode === 'user') ? 'environment' : 'user';
+        // restart camera with new facingMode if shield is open
+        if (!shield.classList.contains('hidden')) {
+          await startCamera();
+        }
+      });
+
+      // initial UI
+      updateUI();
+      startClock();
+      showQuote();
+    };
+  </script>
 </body>
 </html>
