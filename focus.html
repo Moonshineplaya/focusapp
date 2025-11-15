@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Clean Days - Focus Shield</title>
+<meta name="description" content="Count days clean and open a camera shield with Bible quotes when tempted" />
+<style>
+  :root{
+    --bg:#0f1724;
+    --card:#0b1220;
+    --accent:#8ec5ff;
+    --muted:#9aa7b7;
+    --glass: rgba(255,255,255,0.06);
+  }
+  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:linear-gradient(180deg,#081226 0%, #071122 100%);}
+  .wrap{max-width:520px;margin:28px auto;padding:20px;}
+  header{display:flex;align-items:center;gap:12px}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#123 0%, #235 100%);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+  h1{font-size:20px;margin:0}
+  .card{background:var(--card);border-radius:14px;padding:18px;margin-top:18px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+  .big{font-weight:700;font-size:64px;line-height:1;color:var(--accent);text-align:center;font-variant-numeric:tabular-nums}
+  .label{text-align:center;color:var(--muted);margin-top:6px}
+  .buttons{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+  button{background:linear-gradient(180deg,#1b3344,#132633);border:1px solid rgba(255,255,255,0.04);color:#dff3ff;padding:12px 16px;border-radius:10px;font-weight:600;min-width:130px}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--muted)}
+  footer{color:var(--muted);text-align:center;font-size:13px;margin-top:18px}
+  /* full screen shield */
+  .shield{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;z-index:9999}
+  video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:black}
+  .overlay{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;padding:18px;pointer-events:none}
+  .quote{max-width:900px;pointer-events:auto;background:linear-gradient(180deg,rgba(0,0,0,0.35),rgba(0,0,0,0.6));backdrop-filter:blur(6px);padding:18px;border-radius:12px;color:#fff;text-align:center;font-size:18px;margin-bottom:12px}
+  .shield-controls{display:flex;gap:8px;margin-bottom:30px;pointer-events:auto}
+  .small{font-size:13px;color:var(--muted)}
+  .topbar{display:flex;justify-content:space-between;align-items:center;width:100%;padding:8px 12px;color:var(--muted)}
+  .pill{background:var(--glass);padding:6px 10px;border-radius:999px;font-weight:600}
+  .hidden{display:none}
+  @media (max-width:520px){
+    .big{font-size:48px}
+    .quote{font-size:16px;padding:14px}
+    button{min-width:120px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">FD</div>
+    <div>
+      <h1>Clean Days</h1>
+      <div class="small">Count the days since your last slip</div>
+    </div>
+  </header>
+
+  <div class="card" id="mainCard">
+    <div style="text-align:center">
+      <div class="big" id="daysCount">0</div>
+      <div class="label" id="sinceText">since last slip</div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:14px">
+      <div style="text-align:center">
+        <div class="small">Last slip</div>
+        <div id="lastSlipText" class="small" style="font-weight:700;color:var(--accent)"></div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button id="startShieldBtn" aria-label="Open Focus Shield">Start Shield</button>
+      <button id="slipBtn" class="ghost" aria-label="Record I slipped">I slipped</button>
+    </div>
+
+    <div style="margin-top:12px;text-align:center;color:var(--muted);font-size:13px">
+      Tip press Start Shield when you feel tempted to help refocus
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:12px">
+    <button id="resetAll" class="ghost" style="padding:8px 12px;font-size:13px">Reset counter</button>
+  </div>
+
+  <footer>
+    Works in Safari on iPhone add to home screen for app like feel
+  </footer>
+</div>
+
+<!-- Shield full screen -->
+<div id="shield" class="shield hidden" role="dialog" aria-modal="true">
+  <video id="cam" autoplay playsinline muted></video>
+
+  <div class="overlay">
+    <div class="topbar" style="width:100%;max-width:900px">
+      <div class="pill" id="quoteCounter">1 / 5</div>
+      <div style="display:flex;gap:8px">
+        <button id="prevQuote" class="ghost" style="padding:6px 10px">Prev</button>
+        <button id="nextQuote" class="ghost" style="padding:6px 10px">Next</button>
+        <button id="closeShield" style="background:#ff6b6b;border:none;padding:8px 12px;border-radius:10px;color:white">Close</button>
+      </div>
+    </div>
+
+    <div style="height:30vh;display:flex;align-items:center;justify-content:center;width:100%">
+      <div class="quote" id="quoteText">Loading...</div>
+    </div>
+
+    <div class="shield-controls">
+      <button id="speakBtn" class="ghost">Read</button>
+      <button id="changeCam" class="ghost">Switch Cam</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // quotes you can change
+  const QUOTES = [
+    "Flee from sexual immorality 1 Corinthians 6 18",
+    "Anyone who looks at a woman lustfully has committed adultery in his heart Matthew 5 28",
+    "Blessed are the pure in heart for they will see God Matthew 5 8",
+    "Keep your heart with all vigilance for from it flow the springs of life Proverbs 4 23",
+    "I can do all things through him who strengthens me Philippians 4 13"
+  ];
+
+  // state keys
+  const KEY = 'focus.lastSlip.v1';
+
+  // elements
+  const daysCountEl = document.getElementById('daysCount');
+  const lastSlipText = document.getElementById('lastSlipText');
+  const startShieldBtn = document.getElementById('startShieldBtn');
+  const slipBtn = document.getElementById('slipBtn');
+  const resetAll = document.getElementById('resetAll');
+  const shield = document.getElementById('shield');
+  const cam = document.getElementById('cam');
+  const quoteText = document.getElementById('quoteText');
+  const prevQuote = document.getElementById('prevQuote');
+  const nextQuote = document.getElementById('nextQuote');
+  const closeShield = document.getElementById('closeShield');
+  const quoteCounter = document.getElementById('quoteCounter');
+  const speakBtn = document.getElementById('speakBtn');
+  const changeCam = document.getElementById('changeCam');
+
+  let quoteIndex = 0;
+  let cycleTimer = null;
+  let lastSlip = loadLastSlip();
+  let stream = null;
+  let usingFacingMode = 'user'; // 'user' (front) or 'environment' (back)
+  let speech = null;
+
+  // init
+  updateUI();
+  function startCycle() {
+    stopCycle();
+    cycleTimer = setInterval(() => { nextQuoteFn(); }, 6000);
+  }
+  function stopCycle() {
+    if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
+  }
+
+  function loadLastSlip(){
+    const raw = localStorage.getItem(KEY);
+    if (!raw) {
+      // default to now so streak is 0 until user marks slip differently
+      const d = new Date();
+      localStorage.setItem(KEY, d.toISOString());
+      return new Date(d);
+    }
+    return new Date(raw);
+  }
+
+  function saveLastSlip(d){
+    localStorage.setItem(KEY, d.toISOString());
+    lastSlip = new Date(d);
+    updateUI();
+  }
+
+  function daysSince(date){
+    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const ms = today - start;
+    const days = Math.floor(ms / (1000*60*60*24));
+    return days;
+  }
+
+  function updateUI(){
+    daysCountEl.textContent = String(daysSince(lastSlip));
+    lastSlipText.textContent = lastSlip.toLocaleDateString();
+  }
+
+  // button handlers
+  startShieldBtn.addEventListener('click', openShield);
+  slipBtn.addEventListener('click', () => {
+    if (!confirm('Record slip today and reset counter')) return;
+    saveLastSlip(new Date());
+  });
+
+  resetAll.addEventListener('click', () => {
+    if (!confirm('Reset the counter to zero and set last slip to today')) return;
+    saveLastSlip(new Date());
+  });
+
+  // shield controls
+  prevQuote.addEventListener('click', previousQuote);
+  nextQuote.addEventListener('click', nextQuoteFn);
+  closeShield.addEventListener('click', closeShieldFn);
+  speakBtn.addEventListener('click', toggleSpeak);
+  changeCam.addEventListener('click', switchCamera);
+
+  function showQuote(){
+    quoteText.textContent = QUOTES[quoteIndex];
+    quoteCounter.textContent = (quoteIndex + 1) + ' / ' + QUOTES.length;
+  }
+  function nextQuoteFn(){
+    quoteIndex = (quoteIndex + 1) % QUOTES.length;
+    showQuote();
+  }
+  function previousQuote(){
+    quoteIndex = (quoteIndex - 1 + QUOTES.length) % QUOTES.length;
+    showQuote();
+  }
+
+  async function openShield(){
+    shield.classList.remove('hidden');
+    quoteIndex = 0;
+    showQuote();
+    startCycle();
+    await startCamera();
+  }
+
+  function closeShieldFn(){
+    shield.classList.add('hidden');
+    stopCycle();
+    stopCamera();
+    stopSpeak();
+  }
+
+  async function startCamera(){
+    try {
+      stopCamera();
+      const constraints = {
+        audio: false,
+        video: {
+          facingMode: { exact: usingFacingMode } // try exact first
+        }
+      };
+      // try with facingMode exact then fallback
+      try {
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (e) {
+        // fallback without exact constraint (some browsers don't like exact)
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: { facingMode: usingFacingMode }
+        });
+      }
+      cam.srcObject = stream;
+      // ensure video plays
+      await cam.play().catch(()=>{});
+    } catch (err) {
+      alert('Camera not available please allow camera access or open via Safari on iPhone with HTTPS');
+      console.error(err);
+    }
+  }
+
+  function stopCamera(){
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      stream = null;
+      cam.srcObject = null;
+    }
+  }
+
+  async function switchCamera(){
+    usingFacingMode = (usingFacingMode === 'user') ? 'environment' : 'user';
+    await startCamera();
+  }
+
+  // speech
+  function toggleSpeak(){
+    if (!('speechSynthesis' in window)) {
+      alert('No speech support in this browser');
+      return;
+    }
+    if (speech && speech.paused === false) {
+      stopSpeak();
+      return;
+    }
+    speakCurrentQuote();
+  }
+
+  function speakCurrentQuote(){
+    stopSpeak();
+    const utter = new SpeechSynthesisUtterance(QUOTES[quoteIndex]);
+    utter.rate = 0.95;
+    utter.pitch = 1.0;
+    utter.lang = 'en-US';
+    speechSynthesis.speak(utter);
+    speech = utter;
+  }
+
+  function stopSpeak(){
+    if (speechSynthesis) speechSynthesis.cancel();
+    speech = null;
+  }
+
+  // keyboard escape closes shield
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !shield.classList.contains('hidden')) closeShieldFn();
+  });
+
+  // handle page visibility to stop camera when backgrounded
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !shield.classList.contains('hidden')) {
+      stopCamera();
+    } else {
+      // if shield shown and page visible restart camera
+      if (!shield.classList.contains('hidden')) startCamera();
+    }
+  });
+
+  // initial show
+  showQuote();
+})();
+</script>
+</body>
+</html>
