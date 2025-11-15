@@ -53,6 +53,26 @@
 
   .hidden{display:none}
 
+  /* shaking animation for text */
+  @keyframes shake {
+    0% { transform: translate(0px, 0px); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0px, 0px); }
+  }
+
+  .shake {
+    animation: shake 0.1s infinite;
+  }
+
+  /* red border around camera */
+  .cam-alert {
+    box-shadow: 0 0 20px 6px red inset;
+    border-radius: 4px;
+  }
+
   @media (max-width:520px){
     .big{font-size:40px}
     .quote{font-size:18px;padding:16px}
@@ -133,7 +153,6 @@
 
 <script>
 (() => {
-  // USER EDITABLE QUOTES
   const QUOTES = [
     "Flee from sexual immorality 1 Corinthians 6:18",
     "Anyone who looks at a woman lustfully has committed adultery in his heart Matthew 5:28",
@@ -142,10 +161,8 @@
     "I can do all things through him who strengthens me Philippians 4:13"
   ];
 
-  // STATE KEYS
   const KEY = 'focus.lastSlip.v1';
 
-  // ELEMENTS
   const daysCountEl = document.getElementById('daysCount');
   const lastSlipTextEl = document.getElementById('lastSlipText');
   const startShieldBtn = document.getElementById('startShieldBtn');
@@ -166,281 +183,102 @@
   let cycleTimer = null;
   let lastSlip = loadLastSlip();
   let stream = null;
-  let usingFacingMode = 'user'; // 'user' (front) or 'environment' (back)
+  let usingFacingMode = 'user';
   let speechUtter = null;
   let clockTimer = null;
   let voicesReady = false;
   let preferredVoice = null;
 
-  // Initialize UI
   updateUI();
   showQuote();
 
-  // CLOCK: update every second
   function startClock() {
     stopClock();
-    clockTimer = setInterval(() => {
-      updateClock();
-    }, 1000);
+    clockTimer = setInterval(updateClock,1000);
   }
   function stopClock() {
-    if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+    if(clockTimer){clearInterval(clockTimer);clockTimer=null;}
   }
-
-  function updateClock() {
+  function updateClock(){
     const d = daysSince(lastSlip);
     daysCountEl.textContent = String(d.days);
     elapsedClock.textContent = `${d.days}d ${pad(d.hours)}:${pad(d.minutes)}:${pad(d.seconds)}`;
   }
-
-  function pad(n){ return String(n).padStart(2,'0'); }
-
+  function pad(n){return String(n).padStart(2,'0');}
   function daysSince(date){
-    // return object {days,hours,minutes,seconds}
-    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    // we want full elapsed from the saved date/time too
     const now = new Date();
     const ms = now - new Date(date);
-    let totalSec = Math.floor(ms / 1000);
-    const days = Math.floor(totalSec / (3600*24));
-    totalSec -= days * 3600 * 24;
-    const hours = Math.floor(totalSec / 3600);
-    totalSec -= hours * 3600;
-    const minutes = Math.floor(totalSec / 60);
-    const seconds = totalSec - minutes * 60;
-    return { days, hours, minutes, seconds };
+    let totalSec = Math.floor(ms/1000);
+    const days = Math.floor(totalSec/(3600*24));
+    totalSec -= days*3600*24;
+    const hours = Math.floor(totalSec/3600);
+    totalSec -= hours*3600;
+    const minutes = Math.floor(totalSec/60);
+    const seconds = totalSec-minutes*60;
+    return {days,hours,minutes,seconds};
   }
-
   function loadLastSlip(){
     const raw = localStorage.getItem(KEY);
-    if (!raw) {
-      // default to now so streak starts at 0 until user records slip differently
+    if(!raw){
       const d = new Date();
-      localStorage.setItem(KEY, d.toISOString());
+      localStorage.setItem(KEY,d.toISOString());
       return new Date(d);
     }
     return new Date(raw);
   }
-
   function saveLastSlip(d){
-    localStorage.setItem(KEY, d.toISOString());
+    localStorage.setItem(KEY,d.toISOString());
     lastSlip = new Date(d);
     updateUI();
   }
-
   function updateUI(){
     lastSlipTextEl.textContent = lastSlip.toLocaleString();
     updateClock();
     startClock();
   }
 
-  // BUTTONS
-  startShieldBtn.addEventListener('click', openShield);
-  slipBtn.addEventListener('click', () => {
-    if (!confirm('Record slip today and reset counter?')) return;
-    saveLastSlip(new Date());
-  });
-  resetAllBtn.addEventListener('click', () => {
-    if (!confirm('Reset the counter to today?')) return;
-    saveLastSlip(new Date());
-  });
-
-  prevQuote.addEventListener('click', previousQuote);
-  nextQuote.addEventListener('click', nextQuoteFn);
-  closeShield.addEventListener('click', closeShieldFn);
-  speakBtn.addEventListener('click', toggleSpeak);
-  changeCam.addEventListener('click', switchCamera);
+  startShieldBtn.addEventListener('click',openShield);
+  slipBtn.addEventListener('click',()=>{if(!confirm('Record slip today and reset counter?')) return; saveLastSlip(new Date());});
+  resetAllBtn.addEventListener('click',()=>{if(!confirm('Reset the counter to today?')) return; saveLastSlip(new Date());});
+  prevQuote.addEventListener('click',previousQuote);
+  nextQuote.addEventListener('click',nextQuoteFn);
+  closeShield.addEventListener('click',closeShieldFn);
+  changeCam.addEventListener('click',switchCamera);
 
   function showQuote(){
     quoteText.textContent = QUOTES[quoteIndex];
-    quoteCounter.textContent = (quoteIndex + 1) + ' / ' + QUOTES.length;
+    quoteCounter.textContent = (quoteIndex+1)+' / '+QUOTES.length;
   }
-  function nextQuoteFn(){
-    quoteIndex = (quoteIndex + 1) % QUOTES.length;
-    showQuote();
-    autoReadCurrentQuote();
-  }
-  function previousQuote(){
-    quoteIndex = (quoteIndex - 1 + QUOTES.length) % QUOTES.length;
-    showQuote();
-    autoReadCurrentQuote();
-  }
+  function nextQuoteFn(){quoteIndex=(quoteIndex+1)%QUOTES.length;showQuote();}
+  function previousQuote(){quoteIndex=(quoteIndex-1+QUOTES.length)%QUOTES.length;showQuote();}
 
-  // SHIELD OPEN/CLOSE
   async function openShield(){
     shield.classList.remove('hidden');
-    quoteIndex = 0;
-    showQuote();
+    quoteIndex=0;showQuote();
     startCycle();
-    await ensureVoicesLoaded(); // prepare speech voices
+    quoteText.classList.add('shake');
+    cam.classList.add('cam-alert');
     await startCamera();
-    autoReadCurrentQuote(true);
   }
 
   function closeShieldFn(){
-    // hide first to remove focus
     shield.classList.add('hidden');
-    stopCycle();
-    stopCamera();
-    stopSpeak();
+    stopCycle();stopCamera();stopSpeak();
+    quoteText.classList.remove('shake');
+    cam.classList.remove('cam-alert');
   }
 
-  // CAMERA
   async function startCamera(){
-    try {
-      stopCamera(); // ensure stopped before starting new
-      const constraintsFirst = {
-        audio: false,
-        video: { facingMode: { exact: usingFacingMode } }
-      };
-      try {
-        stream = await navigator.mediaDevices.getUserMedia(constraintsFirst);
-      } catch (e) {
-        // fallback without exact (some browsers reject exact)
-        stream = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: { facingMode: usingFacingMode }
-        });
-      }
-      cam.srcObject = stream;
-      // play and ensure unmuted as needed (we keep muted to avoid autoplay issues)
-      await cam.play().catch(()=>{});
-    } catch (err) {
-      console.error('camera error', err);
-      alert('Camera not available please allow camera access or open via Safari on iPhone with HTTPS');
-    }
-  }
-
-  function stopCamera(){
-    try {
-      if (stream) {
-        stream.getTracks().forEach(t => {
-          try { t.stop(); } catch(e) {}
-        });
-      }
-    } catch(e){
-      console.warn('stopCamera error', e);
-    } finally {
-      stream = null;
-      try {
-        cam.pause();
-        cam.srcObject = null;
-      } catch(e){}
-    }
-  }
-
-  async function switchCamera(){
-    usingFacingMode = (usingFacingMode === 'user') ? 'environment' : 'user';
-    await startCamera();
-  }
-
-  // CYCLE QUOTES
-  function startCycle(){
-    stopCycle();
-    cycleTimer = setInterval(() => { nextQuoteFn(); }, 7000);
-  }
-  function stopCycle(){
-    if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
-  }
-
-  // SPEECH
-  async function ensureVoicesLoaded(){
-    if (voicesReady) return;
-    return new Promise((resolve) => {
-      const load = () => {
-        const v = speechSynthesis.getVoices();
-        if (v.length) {
-          voicesReady = true;
-          // try to pick a male voice by name common values
-          preferredVoice = findMaleVoice(v) || v[0];
-          resolve();
-        } else {
-          // try later
-          setTimeout(load, 50);
-        }
-      };
-      load();
-    });
-  }
-
-  function findMaleVoice(voices){
-    // heuristics: try known male names first (Alex, Daniel, Mark, Tom, John, etc)
-    const maleNames = ['Alex','Daniel','John','Tom','Mark','Michael','David','Daniel','Fred','George','Daniel','Aaron'];
-    for (let name of maleNames){
-      const found = voices.find(v => v.name && v.name.toLowerCase().includes(name.toLowerCase()));
-      if (found) return found;
-    }
-    // try voices with "male" in voiceURI or name (rare)
-    const found2 = voices.find(v => (v.voiceURI && v.voiceURI.toLowerCase().includes('male')) || (v.name && v.name.toLowerCase().includes('male')));
-    if (found2) return found2;
-    return null;
-  }
-
-  function stopSpeak(){
-    try {
-      if (speechSynthesis) speechSynthesis.cancel();
-    } catch(e){}
-    speechUtter = null;
-    speakBtn.textContent = 'Read';
-  }
-
-  function autoReadCurrentQuote(suppressIfDisabled){
-    // automatically read the verse when shield opens or quote changes
-    // we always try to read once on open; the user can toggle off by pressing Read which cancels
-    speakCurrentQuote();
-  }
-
-  function toggleSpeak(){
-    if (!('speechSynthesis' in window)) {
-      alert('Speech not supported in this browser');
-      return;
-    }
-    // if already speaking stop
-    if (speechSynthesis.speaking && !speechSynthesis.paused) {
-      stopSpeak();
-      return;
-    }
-    speakCurrentQuote();
-  }
-
-  function speakCurrentQuote(){
-    stopSpeak();
-    if (!('speechSynthesis' in window)) return;
-    const text = QUOTES[quoteIndex];
-    const utt = new SpeechSynthesisUtterance(text);
-    // apply a more natural rate for longer text
-    utt.rate = 0.95;
-    utt.pitch = 1.0;
-    // use preferred voice if available
-    if (preferredVoice) utt.voice = preferredVoice;
-    // set lang if voice has it
-    if (utt.voice && utt.voice.lang) utt.lang = utt.voice.lang;
-    speechUtter = utt;
-    try {
-      speechSynthesis.speak(utt);
-      speakBtn.textContent = 'Stop';
-    } catch(e) {
-      console.warn('speak error', e);
-    }
-  }
-
-  // keyboard shortcut close
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !shield.classList.contains('hidden')) closeShieldFn();
-  });
-
-  // visibility change stops camera when backgrounded
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
+    try{
       stopCamera();
-      stopSpeak();
-    } else {
-      if (!shield.classList.contains('hidden')) startCamera();
-    }
-  });
-
-  // show first quote on load
-  showQuote();
+      stream = await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:usingFacingMode}});
+      cam.srcObject=stream; await cam.play().catch(()=>{});
+    }catch(err){console.error(err);}
+  }
+  function stopCamera(){try{if(stream){stream.getTracks().forEach(t=>{try{t.stop();}catch(e){}});}}catch(e){}finally{stream=null;try{cam.pause();cam.srcObject=null;}catch(e){}}}
+  async function switchCamera(){usingFacingMode=(usingFacingMode==='user')?'environment':'user'; await startCamera();}
+  function startCycle(){stopCycle();cycleTimer=setInterval(nextQuoteFn,7000);}
+  function stopCycle(){if(cycleTimer){clearInterval(cycleTimer);cycleTimer=null;}}
 
 })();
 </script>
